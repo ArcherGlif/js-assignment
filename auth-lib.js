@@ -43,18 +43,7 @@ function addUserToGroup(user, group) {
         || !allGroups.includes(group)
         || !allUsers.includes(user)) throwError()
 
-    // console.log(user,group)
-
     allUsers[allUsers.indexOf(user)].groups.push(group)
-    // allUsers = allUsers.map(function(user){
-
-    //     if(user.name == this.user.name){
-    //         user.groups.push(this.group.groupName)
-    //     }
-
-    //     return user
-
-    // },{user,group})
 }
 
 // Удаляет пользователя user из группы group. Должна бросить исключение, если пользователя user нет в группе group
