@@ -144,6 +144,7 @@ function addRightToGroup(...resp) {
 function removeRightFromGroup(...resp) {
     let {0:right, 1:group} = resp
 
+    //Валидация
     if (!right 
         || !group 
         || !allGroups.includes(group) 
@@ -180,4 +181,20 @@ function logout() {
     loginUser = ""
 }
 
-function isAuthorized(user, right) {}
+function isAuthorized(user, right) {
+
+    //Валидация
+    if (!user 
+        || !right 
+        || !allUsers.includes(user) 
+        || !allRights.includes(right)) throwError()
+
+    for (group of userGroups(user)){
+
+        if (groupRights(group).includes(right)) {
+            return true
+        }
+
+    }
+    return false
+}
