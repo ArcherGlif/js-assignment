@@ -3,6 +3,7 @@ const MESSAGE_ERROR = "проверьте валиднойсть передав�
 let allUsers    = []
 let allRights   = []
 let allGroups   = []
+let loginUser   = ""
 
 let throwError  = () => { throw new Error(MESSAGE_ERROR) }
 
@@ -154,10 +155,29 @@ function removeRightFromGroup(...resp) {
 
 }
 
-function login(username, password) {}
+function login(username, password) {
 
-function currentUser() {}
+    if (loginUser !== "") return false
 
-function logout() {}
+    let isLoging = allUsers.reduce(function(oldValue,value){
+        return (oldValue || (value.name == username && value.password == password )) 
+    },false)
+
+    if ( isLoging ) {
+        loginUser = allUsers.find(function(user){
+            return user.name === username
+        },{username})
+    }
+
+    return isLoging
+}
+
+function currentUser() {
+    if (loginUser !== "") return loginUser
+}
+
+function logout() {
+    loginUser = ""
+}
 
 function isAuthorized(user, right) {}
