@@ -179,17 +179,18 @@ function logout() {
     }
 }
 
-function isAuthorized(user, right) {
+function isAuthorized(user, right) {return _isAuthorized(user,right) }
 
+function _isAuthorized (user,right){
     //Валидация
     if (!user 
         || !right 
         || !allUsers.includes(user) 
         || !allRights.includes(right)) throwError()
 
-    for (group of userGroups(user)){
+    for (group of user.groups){
 
-        if (groupRights(group).includes(right)) {
+        if (group.rights.includes(right)) {
             return true
         }
 
@@ -212,18 +213,33 @@ function initGuestUser(user,group,right){
 }
 
 // Вход под другим пользователем
-function loginAs(user) {
+function loginAs(username) {
     if (loginUser === "") return false
 
     let isLogingAs = allUsers.reduce(function(oldValue,value){
-        return (oldValue || (value.name == user.name && value.password == user.password )) 
+        return (oldValue || (value.name === username)) 
     },false)
 
     if ( isLogingAs ) {
         loginAsUser = allUsers.find(function(user){
-            return user.name === this.user.name
-        },{user})
+            return user.name === this.username
+        },{username})
     }
 
     return isLogingAs
+}
+
+// Проверка прав у пользователя на команду
+function securityWrapper(action, right){
+    return function(...resp) {
+        let user = currentUser()
+        if (!user){
+            console.log("Авторизуйтесь!")
+        } else {
+            if( _isAuthorized(user,right) ){
+                return action(...resp)
+            }
+            console.log(`Недостаточно прав для команды ${action.name}`)
+        }
+    }
 }

@@ -15,7 +15,7 @@ let rightCreate         = createRight("createAuth")     //Права на соз
 let rightDelete         = createRight("deleteAuth")     //Права на полное удление пользователей,групп,прав
 let rightRelations      = createRight("relationsAuth")  //Права на добавление и удаление прав у объектов
 let rightLogin          = createRight("loginAuth")      //Права на авторизацию
-let rightGuest          = createRight("Guest")
+let rightLoginAs        = createRight("loginAsAuth")    //Права на вход под другим пользователем
 
 // Добавляем группе allRight все права
 addRightToGroup(rightView, groupAllRight)
@@ -23,11 +23,13 @@ addRightToGroup(rightCreate, groupAllRight)
 addRightToGroup(rightDelete, groupAllRight)
 addRightToGroup(rightRelations, groupAllRight)
 addRightToGroup(rightLogin, groupAllRight)
+addRightToGroup(rightLoginAs, groupAllRight)
 
 // Добавляем группе administrator права
 rightsLikeGroup(groupAdmin, groupAllRight)
-removeRightFromGroup(rightCreate, groupAdmin)
-removeRightFromGroup(rightDelete, groupAdmin)
+removeRightFromGroup(rightLoginAs, groupAdmin)
+removeRightFromGroup(rightCreate , groupAdmin)
+removeRightFromGroup(rightDelete , groupAdmin)
 
 // Добавляем группе client права
 addRightToGroup(rightLogin, groupClient)
@@ -36,22 +38,47 @@ addRightToGroup(rightLogin, groupClient)
 addUserToMoreGroup(root, [groupAllRight, groupAdmin, groupClient])
 addUserToMoreGroup(admin, [groupAdmin, groupClient])
 addMoreUserToGroup([client1,client2,client3], groupClient)
-initGuestUser(guest,null,rightGuest)
+initGuestUser(guest)
+
+
 
 // Проверка присутсвия нужных прав у пользователей
-console.log( messageCheckRightsAtUser(root, [rightView,rightCreate,rightDelete,rightRelations,rightLogin]))
+console.log( messageCheckRightsAtUser(root, [rightView,rightCreate,rightDelete,rightRelations,rightLogin,rightLoginAs]))
 console.log( messageCheckRightsAtUser(admin, [rightView,rightRelations,rightLogin]))
-console.log( messageCheckRightsAtUser(client1, [rightLogin,rightView]))
+console.log( messageCheckRightsAtUser(client1, [rightLogin]))
 console.log( messageCheckRightsAtUser(client2, [rightLogin]))
 console.log( messageCheckRightsAtUser(client3, [rightLogin]))
 
 // Действия с аутентификацией
-console.log( loginWrapper("root","toor") )
-console.log( loginWrapper("root","root") )
-console.log( loginWrapper("ignat","ignat") )
-console.log( currentUserWrapper() )
-console.log( logoutWrapper() )
-console.log( currentUserWrapper() )
+// console.log( loginWrapper("root","toor") )
+// console.log( loginWrapper("root","root") )
+// console.log( loginWrapper("ignat","ignat") )
+// console.log( currentUserWrapper() )
+// console.log( logoutWrapper() )
+// console.log( currentUserWrapper() )
+
+// Разграничение функций для прав
+addUserToGroup      = securityWrapper(addUserToGroup        ,rightRelations)
+removeUserFromGroup = securityWrapper(removeUserFromGroup   ,rightRelations)
+addRightToGroup     = securityWrapper(addRightToGroup       ,rightRelations)
+removeRightFromGroup= securityWrapper(removeRightFromGroup  ,rightRelations)
+
+users       = securityWrapper(users         ,rightView)
+groups      = securityWrapper(groups        ,rightView)
+rights      = securityWrapper(rights        ,rightView)
+groupRights = securityWrapper(groupRights   ,rightView)
+userGroups  = securityWrapper(userGroups    ,rightView)
+isAuthorized= securityWrapper(isAuthorized  ,rightView)
+
+createUser  = securityWrapper(createUser    ,rightCreate)
+createGroup = securityWrapper(createGroup   ,rightCreate)
+createRight = securityWrapper(createRight   ,rightCreate)
+
+deleteUser  = securityWrapper(deleteUser    ,rightDelete)
+deleteGroup = securityWrapper(deleteGroup   ,rightDelete)
+deleteRight = securityWrapper(deleteRight   ,rightDelete)
+
+loginAs     = securityWrapper(loginAs       ,rightLoginAs)
 
 //Действия с авторизацией
 
