@@ -187,3 +187,17 @@ function isAuthorized(user, right) {
     }
     return false
 }
+
+// Добавляет пользователя Guest в систему
+function initGuestUser(user,group,right){
+
+    let guest       = !user  ? createUser("Guest","") : user
+    let groupGuest  = !group ? createGroup("Guest")   : group
+    
+    addUserToGroup(guest,groupGuest)
+    
+    if((group && right) || right){
+        let rightGuest  = createRight("Auth")
+        addRightToGroup(rightGuest,groupGuest)
+    }
+}

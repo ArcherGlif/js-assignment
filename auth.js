@@ -4,6 +4,7 @@ let admin               = createUser("administrator","administrator")
 let client1             = createUser("ignat","ignat")
 let client2             = createUser("vasya","vasya")
 let client3             = createUser("alex","alex")
+let guest               = createUser("Гость","")
 
 let groupAllRight       = createGroup("allRight")       //Всемогущий
 let groupAdmin          = createGroup("administrator")  //Не может создавать и полность удалять пользователей,группы,права
@@ -14,6 +15,7 @@ let rightCreate         = createRight("createAuth")     //Права на соз
 let rightDelete         = createRight("deleteAuth")     //Права на полное удление пользователей,групп,прав
 let rightRelations      = createRight("relationsAuth")  //Права на добавление и удаление прав у объектов
 let rightLogin          = createRight("loginAuth")      //Права на авторизацию
+let rightGuest          = createRight("Guest")
 
 // Добавляем группе allRight все права
 addRightToGroup(rightView, groupAllRight)
@@ -34,6 +36,7 @@ addRightToGroup(rightLogin, groupClient)
 addUserToMoreGroup(root, [groupAllRight, groupAdmin, groupClient])
 addUserToMoreGroup(admin, [groupAdmin, groupClient])
 addMoreUserToGroup([client1,client2,client3], groupClient)
+initGuestUser(guest,null,rightGuest)
 
 // Проверка присутсвия нужных прав у пользователей
 console.log( messageCheckRightsAtUser(root, [rightView,rightCreate,rightDelete,rightRelations,rightLogin]))
@@ -53,7 +56,12 @@ console.log( currentUserWrapper() )
 //Действия с авторизацией
 
 
-
+//Поиск пользователя по имени
+function findUserByName(username){
+    return users().find(function(user){
+        return user.name === this.username
+    },{username})
+}
 
 // Добавляет группе groupInit все права которые есть у группы likeGroup
 function rightsLikeGroup (groupInit,likeGroup){
@@ -62,16 +70,16 @@ function rightsLikeGroup (groupInit,likeGroup){
     }
 }
 
-// Добавляет пользователя во все группы 
-function addUserToMoreGroup (user,moreGroup){
-    for (group of moreGroup){
+// Добавляет пользователя user во все группы groups
+function addUserToMoreGroup (user,groups){
+    for (group of groups){
         addUserToGroup(user,group)
     }
 }
 
-// Добавляет всех пользователей в группу  
-function addMoreUserToGroup (moreUser,group){
-    for (user of moreUser){
+// Добавляет всех пользователей users в группу group 
+function addMoreUserToGroup (users,group){
+    for (user of users){
         addUserToGroup(user,group)
     }
 }
