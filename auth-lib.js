@@ -4,6 +4,7 @@ let allUsers    = []
 let allRights   = []
 let allGroups   = []
 let loginUser   = ""
+let loginAsUser = ""
 
 let throwError  = () => { throw new Error(MESSAGE_ERROR) }
 
@@ -163,11 +164,19 @@ function login(username, password) {
 }
 
 function currentUser() {
-    if (loginUser !== "") return loginUser
+    if (loginAsUser === ""){
+        if (loginUser !== "") return loginUser
+    }else{
+        return loginAsUser
+    }
 }
 
 function logout() {
-    loginUser = ""
+    if (loginAsUser == ""){
+        loginUser = ""
+    }else {
+        loginAsUser = ""
+    }
 }
 
 function isAuthorized(user, right) {
@@ -200,4 +209,21 @@ function initGuestUser(user,group,right){
         let rightGuest  = createRight("Auth")
         addRightToGroup(rightGuest,groupGuest)
     }
+}
+
+// Вход под другим пользователем
+function loginAs(user) {
+    if (loginUser === "") return false
+
+    let isLogingAs = allUsers.reduce(function(oldValue,value){
+        return (oldValue || (value.name == user.name && value.password == user.password )) 
+    },false)
+
+    if ( isLogingAs ) {
+        loginAsUser = allUsers.find(function(user){
+            return user.name === this.user.name
+        },{user})
+    }
+
+    return isLogingAs
 }
