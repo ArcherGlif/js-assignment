@@ -50,12 +50,12 @@ console.log( messageCheckRightsAtUser(client2, [rightLogin]))
 console.log( messageCheckRightsAtUser(client3, [rightLogin]))
 
 // Действия с аутентификацией
-// console.log( loginWrapper("root","toor") )
-// console.log( loginWrapper("root","root") )
-// console.log( loginWrapper("ignat","ignat") )
-// console.log( currentUserWrapper() )
-// console.log( logoutWrapper() )
-// console.log( currentUserWrapper() )
+console.log( loginWrapper("root","toor") )
+console.log( loginWrapper("root","root") )
+console.log( loginWrapper("ignat","ignat") )
+console.log( currentUserWrapper() )
+console.log( logoutWrapper() )
+console.log( currentUserWrapper() )
 
 // Разграничение функций для прав
 addUserToGroup      = securityWrapper(addUserToGroup        ,rightRelations)
@@ -80,8 +80,9 @@ deleteRight = securityWrapper(deleteRight   ,rightDelete)
 
 loginAs     = securityWrapper(loginAs       ,rightLoginAs)
 
-//Действия с авторизацией
-
+addActionListener(function(user,action){
+    console.log(`Пользователь ${user.name} сделал ${action.name}`)
+})
 
 //Поиск пользователя по имени
 function findUserByName(username){

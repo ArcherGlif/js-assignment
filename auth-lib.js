@@ -1,10 +1,11 @@
 const MESSAGE_ERROR = "проверьте валиднойсть передаваемых данных"
 
-let allUsers    = []
-let allRights   = []
-let allGroups   = []
-let loginUser   = ""
-let loginAsUser = ""
+let allUsers        = []
+let allRights       = []
+let allGroups       = []
+let loginUser       = ""
+let loginAsUser     = ""
+let listOfListener  = []
 
 let throwError  = () => { throw new Error(MESSAGE_ERROR) }
 
@@ -178,9 +179,9 @@ function logout() {
         loginAsUser = ""
     }
 }
-
+// Проверяет право right у пользователя user 
 function isAuthorized(user, right) {return _isAuthorized(user,right) }
-
+// доп функция от переполнения стека при установке прав для функции isAuthorized
 function _isAuthorized (user,right){
     //Валидация
     if (!user 
@@ -237,9 +238,20 @@ function securityWrapper(action, right){
             console.log("Авторизуйтесь!")
         } else {
             if( _isAuthorized(user,right) ){
-                return action(...resp)
+
+                let result = action(...resp)
+
+                listOfListener.forEach(function(listener){
+                    listener(this.user, this.action)
+                },{user,action})
+
+                return result
             }
             console.log(`Недостаточно прав для команды ${action.name}`)
         }
     }
+}
+
+function addActionListener (listener) {
+    listOfListener.push(listener)
 }
