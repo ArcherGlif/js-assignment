@@ -120,8 +120,8 @@ function groupRights(group) {
 }
 
 // Добавляет право right к группе group
-function addRightToGroup(...resp) {
-    let {0:right, 1:group} = resp
+function addRightToGroup(right,group) {
+
     //Валидация
     if (!right 
         || !group 
@@ -132,8 +132,7 @@ function addRightToGroup(...resp) {
 }
 
 // Удаляет право right из группы group. Должна бросить исключение, если права right нет в группе group
-function removeRightFromGroup(...resp) {
-    let {0:right, 1:group} = resp
+function removeRightFromGroup(right,group) {
 
     //Валидация
     if (!right 
@@ -151,17 +150,11 @@ function login(username, password) {
 
     if (loginUser !== "") return false
 
-    let isLoging = allUsers.reduce(function(oldValue,value){
-        return (oldValue || (value.name == username && value.password == password )) 
-    },false)
+    loginUser = allUsers.find(function(user){
+        return (user.name === this.username && user.password == this.password)
+    },{username,password}) || ""
 
-    if ( isLoging ) {
-        loginUser = allUsers.find(function(user){
-            return user.name === username
-        },{username})
-    }
-
-    return isLoging
+    return !!loginUser
 }
 
 function currentUser() {
@@ -181,7 +174,7 @@ function logout() {
 }
 // Проверяет право right у пользователя user 
 function isAuthorized(user, right) {return _isAuthorized(user,right) }
-// доп функция от переполнения стека при установке прав для функции isAuthorized
+// доп функция от переполнения стека при установке прав для функции isAuthorized с помощью securityWrapper
 function _isAuthorized (user,right){
     //Валидация
     if (!user 
